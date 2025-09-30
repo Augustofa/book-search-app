@@ -9,7 +9,9 @@ import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import me.augusto.booksearchapp.databinding.ListItemBookBinding
 
-class BookAdapter : ListAdapter<Book, BookAdapter.BookViewHolder>(BookDiffCallback()) {
+class BookAdapter(private val onItemClick: (Book) -> Unit)
+    : ListAdapter<Book, BookAdapter.BookViewHolder>(BookDiffCallback()) {
+
 
     inner class BookViewHolder(val binding: ListItemBookBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(book: Book) {
@@ -29,6 +31,8 @@ class BookAdapter : ListAdapter<Book, BookAdapter.BookViewHolder>(BookDiffCallba
                 placeholder(R.drawable.image_not_found)
                 error(R.drawable.image_not_found)
             }
+
+            binding.root.setOnClickListener { onItemClick(book) }
         }
     }
 

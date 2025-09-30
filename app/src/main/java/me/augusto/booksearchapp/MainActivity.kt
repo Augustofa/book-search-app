@@ -1,5 +1,7 @@
 package me.augusto.booksearchapp
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -17,8 +19,7 @@ import okhttp3.OkHttpClient
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-    private val bookAdapter = BookAdapter()
-    private val client = OkHttpClient()
+    private val bookAdapter = BookAdapter { book -> bookCardClicked(book) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -79,5 +80,12 @@ class MainActivity : AppCompatActivity() {
         binding.progressBar.visibility = View.GONE
         binding.tvMessage.visibility = View.VISIBLE
         binding.tvMessage.text = message
+    }
+
+    fun bookCardClicked(book : Book) {
+        var url = "https://openlibrary.org${book.workId}"
+        val intent = Intent(Intent.ACTION_VIEW)
+        intent.data = Uri.parse(url)
+        startActivity(intent)
     }
 }

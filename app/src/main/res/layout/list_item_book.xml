@@ -39,7 +39,7 @@
             android:maxLines="2"
             android:textSize="18sp"
             android:textStyle="bold"
-            android:textColor="@color/black"
+            android:textColor="@color/blue"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/ivCover"
             app:layout_constraintTop_toTopOf="parent"
@@ -66,25 +66,39 @@
             app:layout_constraintStart_toStartOf="@id/tvTitle"
             tools:text="YEAR" />
 
-        <TextView
-            android:id="@+id/separator"
+<!--        <TextView-->
+<!--            android:id="@+id/separator"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="•"-->
+<!--            android:layout_marginStart="8dp"-->
+<!--            app:layout_constraintStart_toEndOf="@id/tvYear"-->
+<!--            app:layout_constraintTop_toTopOf="@id/tvYear"-->
+<!--            app:layout_constraintBottom_toBottomOf="@id/tvYear"-->
+<!--            tools:ignore="HardcodedText" />-->
+
+        <RatingBar
+            android:id="@+id/ratingBar"
+            style="@style/Widget.AppCompat.RatingBar.Small"
+            android:secondaryProgressTint="#00000000"
+            android:progressTint="@color/yellow"
+            android:stepSize="0.1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="•"
-            android:layout_marginStart="8dp"
-            app:layout_constraintStart_toEndOf="@id/tvYear"
-            app:layout_constraintTop_toTopOf="@id/tvYear"
-            app:layout_constraintBottom_toBottomOf="@id/tvYear"
-            tools:ignore="HardcodedText" />
+            android:layout_marginEnd="5dp"
+            app:layout_constraintBottom_toBottomOf="@+id/tvRating"
+            app:layout_constraintEnd_toStartOf="@id/tvRating"
+            app:layout_constraintTop_toTopOf="@+id/tvRating" />
 
         <TextView
-            android:id="@+id/tvPageCount"
+            android:id="@+id/tvRating"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            app:layout_constraintStart_toEndOf="@id/separator"
+            android:layout_marginEnd="20dp"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@id/tvYear"
-            tools:text="X pages" />
+            tools:text="0.0" />
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -7,13 +7,12 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import me.augusto.booksearchapp.databinding.ActivityMainBinding
-import okhttp3.Call
-import okhttp3.Callback
 import okhttp3.OkHttpClient
-import okhttp3.Request
-import okhttp3.Response
-import java.io.IOException
 
 class MainActivity : AppCompatActivity() {
 
@@ -40,7 +39,7 @@ class MainActivity : AppCompatActivity() {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 binding.searchView.clearFocus()
                 query?.let {
-                    makeRequest(it)
+                    searchBook(it)
                 }
                 return true
             }
@@ -51,56 +50,29 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
-    fun makeRequest(query : String) {
+    fun searchBook(query : String) {
         binding.progressBar.visibility = View.VISIBLE
         binding.tvMessage.visibility = View.GONE
         binding.recyclerView.visibility = View.GONE
 
-        var url = "https://openlibrary.org/search.json?q=house%20of%20leaves&lang=pt&limit=5"
-        var request = Request.Builder()
-            .url(url)
-            .build();
-
-        client.newCall(request).enqueue(object : Callback {
-            override fun onFailure(call: Call, e: IOException) {
-                Log.e("API_REQUEST", "Failed to execute request", e)
-                runOnUiThread {
-                    showResultMessage("Failed to make request...")
+        lifecycleScope.launch {
+            try {
+                val books = withContext(Dispatchers.IO) {
+                    BookRepository.searchBooks(query)
                 }
-            }
 
-            override fun onResponse(call: Call, response: Response) {
-                response.use {
-                    if (!it.isSuccessful) {
-                        Log.d("API_REQUEST", "Not successfull: ${it.code}")
-                        runOnUiThread {
-                            showResultMessage("Error: ${it.code}")
-                        }
-                        return
-                    }
-
-                    val responseBody = it.body?.string()
-                    Log.d("API_REQUEST", "Response Body: $responseBody")
-
-                    // TODO: Parse response into List<Book>
-
-                    runOnUiThread {
-                        binding.progressBar.visibility = View.GONE
-
-                        if (responseBody.isNullOrEmpty()) {
-                            binding.tvMessage.visibility = View.VISIBLE
-                            binding.tvMessage.text = "No matching books found."
-                        } else {
-                            // TODO: Parse the book list to update adapter
-                            // bookAdapter.submitList(parsedBooks)
-                            // binding.recyclerView.visibility = View.VISIBLE
-                            binding.tvMessage.visibility = View.VISIBLE // For testing
-                            binding.tvMessage.text = "Success! (Check Logcat for response)"
-                        }
-                    }
+                if (books.isEmpty()) {
+                    showResultMessage("No matching books found :c")
+                } else {
+                    bookAdapter.submitList(books)
+                    binding.progressBar.visibility = View.GONE
+                    binding.recyclerView.visibility = View.VISIBLE
                 }
+            } catch(e: Exception) {
+                Log.e("MAIN_ACTIVITY", "Error performing search", e)
+                showResultMessage("Error: ${e.message}")
             }
-        })
+        }
     }
 
     fun showResultMessage(message : String) {

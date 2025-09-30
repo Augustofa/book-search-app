@@ -1,6 +1,7 @@
 package me.augusto.booksearchapp
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -15,9 +16,14 @@ class BookAdapter : ListAdapter<Book, BookAdapter.BookViewHolder>(BookDiffCallba
             binding.tvTitle.text = book.title
             binding.tvAuthor.text = book.author ?: "Unknown Author"
             binding.tvYear.text = book.publicationYear?.toString() ?: "N/A"
-            binding.tvPageCount.text = book.pageCount?.let { "$it pages" } ?: ""
+            binding.tvRating.text = book.averageRating?.let { String.format("%.1f", it) } ?: "Not rated"
 
-            binding.separator.visibility = if (book.pageCount != null) android.view.View.VISIBLE else android.view.View.GONE
+            book.averageRating?.let { rating ->
+                binding.ratingBar.visibility = View.VISIBLE
+                binding.ratingBar.rating = rating.toFloat()
+            } ?: run {
+                binding.ratingBar.visibility = View.GONE
+            }
 
             binding.ivCover.load(book.coverUrl) {
                 placeholder(R.drawable.image_not_found)
